@@ -66,3 +66,6 @@ GetiPlayerPostProcessing/bin/Release/app.publish/Application Files/GetiPlayerPos
 GetiPlayerPostProcessing/bin/Release/app.publish/Application Files/GetiPlayerPostProcessing_1_0_0_21/GetiPlayerPostProcessing.exe.manifest
 GetiPlayerPostProcessing/obj/x86/Release/GetiPlayerPostProcessing.vbproj.GenerateResource.Cache
 GetiPlayerPostProcessing/obj/x86/Debug/GetiPlayerPostProcessing.vbproj.GenerateResource.Cache
+GetiPlayerPostProcessing/bin/Release/app.publish/Application Files/GetiPlayerPostProcessing_1_0_0_25/GetiPlayerPostProcessing.exe.config.deploy
+GetiPlayerPostProcessing/bin/Release/app.publish/Application Files/GetiPlayerPostProcessing_1_0_0_25/GetiPlayerPostProcessing.exe.deploy
+GetiPlayerPostProcessing/bin/Release/app.publish/Application Files/GetiPlayerPostProcessing_1_0_0_25/GetiPlayerPostProcessing.exe.manifest

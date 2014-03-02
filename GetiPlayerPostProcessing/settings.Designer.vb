@@ -34,6 +34,13 @@ Partial Class Settings
         Me.Label5 = New System.Windows.Forms.Label()
         Me.txtFFMpeg = New System.Windows.Forms.TextBox()
         Me.Label6 = New System.Windows.Forms.Label()
+        Me.btnAddRow = New System.Windows.Forms.Button()
+        Me.Panel1 = New System.Windows.Forms.Panel()
+        Me.TextBoxReplaceToTemplate = New System.Windows.Forms.TextBox()
+        Me.LabelReplaceTemplate = New System.Windows.Forms.Label()
+        Me.TextBoxReplaceFromTemplate = New System.Windows.Forms.TextBox()
+        Me.Label7 = New System.Windows.Forms.Label()
+        Me.Panel1.SuspendLayout()
         Me.SuspendLayout()
         '
         'txtWatched
@@ -95,7 +102,7 @@ Partial Class Settings
         '
         'btnSave
         '
-        Me.btnSave.Location = New System.Drawing.Point(243, 116)
+        Me.btnSave.Location = New System.Drawing.Point(233, 314)
         Me.btnSave.Name = "btnSave"
         Me.btnSave.Size = New System.Drawing.Size(75, 23)
         Me.btnSave.TabIndex = 7
@@ -104,7 +111,7 @@ Partial Class Settings
         '
         'btnCancel
         '
-        Me.btnCancel.Location = New System.Drawing.Point(104, 116)
+        Me.btnCancel.Location = New System.Drawing.Point(94, 314)
         Me.btnCancel.Name = "btnCancel"
         Me.btnCancel.Size = New System.Drawing.Size(115, 23)
         Me.btnCancel.TabIndex = 8
@@ -130,17 +137,72 @@ Partial Class Settings
         'Label6
         '
         Me.Label6.AutoSize = True
-        Me.Label6.Location = New System.Drawing.Point(121, 142)
+        Me.Label6.Location = New System.Drawing.Point(111, 340)
         Me.Label6.Name = "Label6"
         Me.Label6.Size = New System.Drawing.Size(185, 13)
         Me.Label6.TabIndex = 11
         Me.Label6.Text = "All paths must have no trailing slashes"
         '
+        'btnAddRow
+        '
+        Me.btnAddRow.Location = New System.Drawing.Point(94, 285)
+        Me.btnAddRow.Name = "btnAddRow"
+        Me.btnAddRow.Size = New System.Drawing.Size(214, 23)
+        Me.btnAddRow.TabIndex = 13
+        Me.btnAddRow.Text = "Add Row"
+        Me.btnAddRow.UseVisualStyleBackColor = True
+        '
+        'Panel1
+        '
+        Me.Panel1.AutoScroll = True
+        Me.Panel1.Controls.Add(Me.TextBoxReplaceToTemplate)
+        Me.Panel1.Controls.Add(Me.LabelReplaceTemplate)
+        Me.Panel1.Controls.Add(Me.TextBoxReplaceFromTemplate)
+        Me.Panel1.Location = New System.Drawing.Point(12, 144)
+        Me.Panel1.Name = "Panel1"
+        Me.Panel1.Size = New System.Drawing.Size(426, 135)
+        Me.Panel1.TabIndex = 14
+        '
+        'TextBoxReplaceToTemplate
+        '
+        Me.TextBoxReplaceToTemplate.Location = New System.Drawing.Point(205, 13)
+        Me.TextBoxReplaceToTemplate.Name = "TextBoxReplaceToTemplate"
+        Me.TextBoxReplaceToTemplate.Size = New System.Drawing.Size(100, 20)
+        Me.TextBoxReplaceToTemplate.TabIndex = 2
+        '
+        'LabelReplaceTemplate
+        '
+        Me.LabelReplaceTemplate.AutoSize = True
+        Me.LabelReplaceTemplate.Location = New System.Drawing.Point(3, 16)
+        Me.LabelReplaceTemplate.Name = "LabelReplaceTemplate"
+        Me.LabelReplaceTemplate.Size = New System.Drawing.Size(59, 13)
+        Me.LabelReplaceTemplate.TabIndex = 1
+        Me.LabelReplaceTemplate.Text = "Replace 1:"
+        '
+        'TextBoxReplaceFromTemplate
+        '
+        Me.TextBoxReplaceFromTemplate.Location = New System.Drawing.Point(91, 13)
+        Me.TextBoxReplaceFromTemplate.Name = "TextBoxReplaceFromTemplate"
+        Me.TextBoxReplaceFromTemplate.Size = New System.Drawing.Size(105, 20)
+        Me.TextBoxReplaceFromTemplate.TabIndex = 0
+        '
+        'Label7
+        '
+        Me.Label7.Location = New System.Drawing.Point(12, 113)
+        Me.Label7.Name = "Label7"
+        Me.Label7.Size = New System.Drawing.Size(426, 28)
+        Me.Label7.TabIndex = 15
+        Me.Label7.Text = "Sometimes you'll need to rename files to allow Plex to match up with it's databas" & _
+            "es. For example Click needs to change to Click (2000) to match."
+        '
         'Settings
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(447, 160)
+        Me.ClientSize = New System.Drawing.Size(447, 366)
+        Me.Controls.Add(Me.Label7)
+        Me.Controls.Add(Me.Panel1)
+        Me.Controls.Add(Me.btnAddRow)
         Me.Controls.Add(Me.Label6)
         Me.Controls.Add(Me.Label5)
         Me.Controls.Add(Me.txtFFMpeg)
@@ -153,8 +215,13 @@ Partial Class Settings
         Me.Controls.Add(Me.txtPlex)
         Me.Controls.Add(Me.txtOutput)
         Me.Controls.Add(Me.txtWatched)
+        Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
+        Me.MaximizeBox = False
         Me.Name = "Settings"
+        Me.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide
         Me.Text = "Settings"
+        Me.Panel1.ResumeLayout(False)
+        Me.Panel1.PerformLayout()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -171,4 +238,10 @@ Partial Class Settings
     Friend WithEvents Label5 As System.Windows.Forms.Label
     Friend WithEvents txtFFMpeg As System.Windows.Forms.TextBox
     Friend WithEvents Label6 As System.Windows.Forms.Label
+    Friend WithEvents btnAddRow As System.Windows.Forms.Button
+    Friend WithEvents Panel1 As System.Windows.Forms.Panel
+    Friend WithEvents TextBoxReplaceToTemplate As System.Windows.Forms.TextBox
+    Friend WithEvents LabelReplaceTemplate As System.Windows.Forms.Label
+    Friend WithEvents TextBoxReplaceFromTemplate As System.Windows.Forms.TextBox
+    Friend WithEvents Label7 As System.Windows.Forms.Label
 End Class

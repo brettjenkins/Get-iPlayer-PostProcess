@@ -191,6 +191,17 @@ Public Class Form1
         newName = newName & "." & fileE(1)
         newName = filename.Replace(filen, newName)
 
+        Dim i As Integer = 0
+        For Each replaceFrom In My.Settings.ReplaceTextFrom
+            Dim replaceTo = My.Settings.ReplaceTextTo(i)
+
+            newName = newName.Replace(replaceFrom, replaceTo)
+
+            i += 1
+        Next
+
+
+
         currentlyProcessingFiles.Add(newName)
         processfiles.Add(newName)
         If filename <> newName Then
