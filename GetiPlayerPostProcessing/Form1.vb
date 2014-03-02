@@ -34,6 +34,16 @@ Public Class Form1
             Return True
         End If
 
+        regex = New System.Text.RegularExpressions.Regex("([0-9])([0-9])-([0-9])([0-9])-([0-9])([0-9])([0-9])([0-9])")
+        If regex.IsMatch(title) Then
+            Return True
+        End If
+
+        regex = New System.Text.RegularExpressions.Regex("([0-9])([0-9])_([0-9])([0-9])_([0-9])([0-9])([0-9])([0-9])")
+        If regex.IsMatch(title) Then
+            Return True
+        End If
+
         Return False
     End Function
 
@@ -88,15 +98,19 @@ Public Class Form1
             If IsFileExist(fileInfo) Then
                 WriteLine(Convert.ToString("file unlocked : ") & sFile)
 
-                WriteLine("Sleeping for 30 secs until we start work")
-                Thread.Sleep(New TimeSpan(0, 0, 30))
+                WriteLine("Sleeping for 90 secs until we start work")
+                Thread.Sleep(New TimeSpan(0, 0, 90))
                 If IsFileExist(fileInfo) Then
                     Dim fileName As String = e.FullPath
                     If IsDateBased(e.Name) Then
+                        WriteLine("renaming to datebased name")
                         fileName = RenameToDateName(fileName, processingfiles)
                     End If
 
+                    WriteLine("removing underscores")
                     fileName = RemoveUnderscoresRename(fileName, processingfiles)
+
+                    WriteLine("adding spaces")
                     fileName = AddSpaces(fileName, processingfiles)
 
 
@@ -106,7 +120,15 @@ Public Class Form1
                     Dim newFolder As String
                     If IsDateBased(e.Name) Then
                         newFolder = RenameSeasonFolder(GeneratePath(explode, explode.Length - 1), year, processingfiles)
+                        Dim oldFilename As String = fileName
                         fileName = fileName.Replace(oldFolder, newFolder)
+
+                        Try
+                            File.Move(oldFilename, fileName)
+                        Catch ex As Exception
+
+                        End Try
+
                     Else
 
                     End If
@@ -118,6 +140,7 @@ Public Class Form1
 
                     MoveToMediaNAS(fileName)
                     RefreshPlex()
+                    '  DeleteDirectory(fileName)
                     currentlyProcessingFiles.Remove(e.FullPath)
                     currentlyProcessingFiles.Remove(fileName)
                     For Each File In processingfiles
@@ -157,8 +180,8 @@ Public Class Form1
 
         newName = System.Text.RegularExpressions.Regex.Replace(newName, "[ ]{2,}", " ")
 
-        If Not newName.Contains("-") Then
-            newName = newName.Replace(" ", " - ")
+        If Not newName.Contains("-") AndAlso Not datePart.Trim.StartsWith("-") Then
+            newName = newName.Trim & " - "
         End If
 
         If dateBased = True Then
@@ -169,8 +192,10 @@ Public Class Form1
         newName = filename.Replace(filen, newName)
 
         currentlyProcessingFiles.Add(newName)
-        processfiles.add(newName)
-        File.Move(filename, newName)
+        processfiles.Add(newName)
+        If filename <> newName Then
+            File.Move(filename, newName)
+        End If
 
         Return newName
 
@@ -192,8 +217,9 @@ Public Class Form1
             Dim newName As String = folder.Replace("Season 1", "Season " & year)
             currentlyProcessingFiles.Add(newName)
 
-            If folder <> newName Then
-                Directory.Move(folder, newName)
+            If Not New DirectoryInfo(newName).Exists Then
+                ' Directory.Move(folder, newName)
+                Directory.CreateDirectory(newName)
             End If
 
             processFiles.Add(newName)
@@ -209,6 +235,17 @@ Public Class Form1
         Dim oldName As String = filename
 
         Dim newEnd As String = explode(explode.Length - 1).Replace("_", " ")
+
+        If IsDateBased(newEnd) = False AndAlso newEnd.Contains(" - ") = False Then
+            Dim regex As New System.Text.RegularExpressions.Regex("s[0-9][0-9]e[0-9][0-9]")
+            If regex.IsMatch(newEnd) Then
+                Dim match As System.Text.RegularExpressions.Match = regex.Match(newEnd)
+                newEnd = newEnd.Replace(match.Value, "- " & match.Value & " -")
+                explode(explode.Length - 1) = newEnd
+            End If
+
+        End If
+
         Dim newName As String = GeneratePath(explode, explode.Length - 1) & "\" & explode(explode.Length - 1).Replace("_", " ")
 
         If watchedFolder.EndsWith(explode(explode.Length - 1)) Then
@@ -226,24 +263,31 @@ Public Class Form1
                 currentlyProcessingFiles.Add(newName)
                 processFiles.Add(newName)
 
-                If (attr And FileAttributes.Directory) = FileAttributes.Directory Then
-                    If oldName <> newName Then
-                        Directory.Move(oldName, newName)
-                    End If
-                Else
-                    If oldName <> newName Then
-                        File.Move(oldName, newName)
-                    End If
-                End If
-
                 If newPathSoFar = Nothing Then
                     newPathSoFar = newEnd
                 Else
                     newPathSoFar = newEnd & "\" & newPathSoFar
                 End If
 
-                Return RemoveUnderscoresRename(GeneratePath(explode, explode.Length - 1), processFiles, newPathSoFar)
+                Dim returnpath As String = RemoveUnderscoresRename(GeneratePath(explode, explode.Length - 1), processFiles, newPathSoFar)
+                Dim e = GeneratePath(explode, explode.Length - 1).Replace("_", " ")
+                newName = newName.Replace(GeneratePath(explode, explode.Length - 1), e)
+                If (attr And FileAttributes.Directory) = FileAttributes.Directory Then
+                    'If oldName <> newName Then
+                    If Not New DirectoryInfo(newName).Exists Then
+                        'Directory.Move(oldName, newName)
+                        Directory.CreateDirectory(newName)
+                    End If
+                Else
+                    If oldName <> returnpath Then
+                        File.Move(oldName, returnpath)
+                    End If
+                End If
 
+ 
+
+                ' Return RemoveUnderscoresRename(GeneratePath(explode, explode.Length - 1), processFiles, newPathSoFar)
+                Return returnpath
 
             Catch generatedExceptionName As IOException
                 Return Nothing
@@ -268,6 +312,29 @@ Public Class Form1
     Private Function RenameToDateName(ByVal filePath As String, ByRef processfiles As List(Of String)) As String
         Dim newName As String = filePath.Replace("s01e01-", "")
         newName = filePath.Replace("s01e01", "")
+
+        ' convert uk date to iso format
+        Dim regex As New System.Text.RegularExpressions.Regex("([0-9][0-9])-([0-9][0-9])-([0-9][0-9][0-9][0-9])")
+        If regex.IsMatch(newName) Then
+            Dim match As System.Text.RegularExpressions.Match = regex.Match(newName)
+
+            Dim day As String = match.Groups(1).Value
+            Dim month As String = match.Groups(2).Value
+            Dim year As String = match.Groups(3).Value
+
+            newName = newName.Replace(match.Value, year & "-" & month & "-" & day)
+        End If
+
+        regex = New System.Text.RegularExpressions.Regex("([0-9][0-9])_([0-9][0-9])_([0-9][0-9][0-9][0-9])")
+        If regex.IsMatch(newName) Then
+            Dim match As System.Text.RegularExpressions.Match = regex.Match(newName)
+
+            Dim day As String = match.Groups(1).Value
+            Dim month As String = match.Groups(2).Value
+            Dim year As String = match.Groups(3).Value
+
+            newName = newName.Replace(match.Value, year & "-" & month & "-" & day)
+        End If
 
         Try
             currentlyProcessingFiles.Add(newName)
@@ -297,6 +364,29 @@ Public Class Form1
         End If
     End Sub
 
+    Private Function DeleteDirectory(ByVal filename As String, Optional ByVal i As Integer = 0)
+        Try
+            If i <= 20 Then
+
+
+                Dim dirToDelete As String = filename.Replace(watchedFolder, "")
+                If dirToDelete.StartsWith("\") Then
+                    dirToDelete = dirToDelete.Substring(1)
+                End If
+                Dim explode = dirToDelete.Split("\")
+
+                dirToDelete = watchedFolder & "\" & explode(0)
+
+                Directory.Delete(dirToDelete, True)
+
+            End If
+        Catch exc As Exception
+            Thread.Sleep(5000)
+            DeleteDirectory(filename, i + 1)
+        End Try
+        Return True
+    End Function
+
     Private Sub WipeMetaTags(ByVal filename As String, ByRef currentProcessing As List(Of String))
         Dim explode = filename.Split(".")
         Dim ext As String = "." & explode(explode.Length - 1)
@@ -323,6 +413,8 @@ Public Class Form1
         End While
         WriteLine("Finished... renaming")
         File.Delete(filename)
+        currentlyProcessingFiles.Add(filename)
+        currentProcessing.Add(filename)
         File.Move(newfilename, filename)
 
     End Sub
@@ -453,10 +545,25 @@ Public Class Form1
         WriteLine("Watching folder " & watchedFolder & "...")
     End Sub
 
+    Private threadRunning As Boolean = False
     Private Sub FileSystemWatcher1_Renamed(ByVal sender As Object, ByVal e As System.IO.RenamedEventArgs) Handles FileSystemWatcher1.Renamed
         Dim nThread As New Thread(AddressOf fileCreated)
+        
 
         nThread.Start(e)
+
+
+    End Sub
+
+    Private Sub ThreadStart(ByVal e As System.IO.RenamedEventArgs)
+        ' Only one thread to run at a time for simplicity's sake.
+        While threadRunning = True
+            Thread.Sleep(5000)
+        End While
+        threadRunning = True
+        fileCreated(e)
+        Thread.Sleep(10000) ' Sleeping for 10 secs
+        threadRunning = False
     End Sub
 
     Private Sub SettingsToolStripMenuItem_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles SettingsToolStripMenuItem.Click

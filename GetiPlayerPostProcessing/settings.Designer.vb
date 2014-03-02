@@ -33,6 +33,7 @@ Partial Class Settings
         Me.btnCancel = New System.Windows.Forms.Button()
         Me.Label5 = New System.Windows.Forms.Label()
         Me.txtFFMpeg = New System.Windows.Forms.TextBox()
+        Me.Label6 = New System.Windows.Forms.Label()
         Me.SuspendLayout()
         '
         'txtWatched
@@ -126,11 +127,21 @@ Partial Class Settings
         Me.txtFFMpeg.Size = New System.Drawing.Size(214, 20)
         Me.txtFFMpeg.TabIndex = 9
         '
+        'Label6
+        '
+        Me.Label6.AutoSize = True
+        Me.Label6.Location = New System.Drawing.Point(121, 142)
+        Me.Label6.Name = "Label6"
+        Me.Label6.Size = New System.Drawing.Size(185, 13)
+        Me.Label6.TabIndex = 11
+        Me.Label6.Text = "All paths must have no trailing slashes"
+        '
         'Settings
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(447, 160)
+        Me.Controls.Add(Me.Label6)
         Me.Controls.Add(Me.Label5)
         Me.Controls.Add(Me.txtFFMpeg)
         Me.Controls.Add(Me.btnCancel)
@@ -159,4 +170,5 @@ Partial Class Settings
     Friend WithEvents btnCancel As System.Windows.Forms.Button
     Friend WithEvents Label5 As System.Windows.Forms.Label
     Friend WithEvents txtFFMpeg As System.Windows.Forms.TextBox
+    Friend WithEvents Label6 As System.Windows.Forms.Label
 End Class
